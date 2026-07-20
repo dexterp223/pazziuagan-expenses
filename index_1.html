@@ -1,0 +1,1760 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+
+.let-root {
+  --paper: #F7F4EE;
+  --grid-line: #E4DFD3;
+  --ink: #26313C;
+  --ink-soft: #5B6672;
+  --teal: #3E7C6B;
+  --mustard: #D6A44A;
+  --plum: #7A5C7E;
+  --navy: #4A5D73;
+  --rose: #C1666B;
+  --orange: #C97B3F;
+  --sky: #5B8AA6;
+  --olive: #7C8B5A;
+  --gray: #8A8578;
+  --card-bg: #FFFDF9;
+  --line: #DAD3C4;
+  font-family: 'Inter', sans-serif;
+  color: var(--ink);
+  background:
+    linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0 / 100% 28px,
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0 / 28px 100%,
+    var(--paper);
+  min-height: 100%;
+  padding: 28px 20px 60px;
+  box-sizing: border-box;
+}
+.let-root * { box-sizing: border-box; }
+
+.let-toast {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-14px);
+  background: var(--teal);
+  color: white;
+  padding: 9px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 4px 14px rgba(38,49,60,0.22);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 1000;
+  max-width: 88%;
+  text-align: center;
+}
+.let-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.let-toast.error { background: var(--rose); }
+
+.let-header { text-align: center; margin-bottom: 22px; }
+.let-title {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 52px;
+  color: var(--ink);
+  line-height: 1;
+  margin: 0;
+  transform: rotate(-1deg);
+}
+.let-sub {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 6px;
+  letter-spacing: 0.02em;
+}
+
+.let-members {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  margin: 18px auto 26px;
+  max-width: 640px;
+}
+.let-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 12px 5px 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.let-avatar {
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 11px; font-weight: 700;
+  flex-shrink: 0;
+}
+.let-chip button {
+  background: none; border: none; color: var(--ink-soft);
+  cursor: pointer; font-size: 14px; line-height: 1; padding: 0 0 0 2px;
+}
+.let-chip button:hover { color: var(--rose); }
+.let-addmember {
+  display: flex; gap: 6px; align-items: center;
+}
+.let-addmember input {
+  border: 1px dashed var(--line);
+  background: transparent;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  width: 110px;
+  outline: none;
+}
+.let-addmember input:focus { border-color: var(--teal); }
+.let-addmember button {
+  border: none; background: var(--ink); color: white;
+  width: 26px; height: 26px; border-radius: 50%;
+  cursor: pointer; font-size: 15px; line-height: 1;
+}
+.let-addmember button:hover { background: var(--teal); }
+
+.let-section-label {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 24px;
+  margin: 0 0 10px 4px;
+  color: var(--ink);
+}
+
+/* Add expense form */
+.let-form {
+  max-width: 640px;
+  margin: 0 auto 34px;
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 20px;
+  position: relative;
+  box-shadow: 2px 3px 0 var(--line);
+}
+.let-form::before {
+  content: '';
+  position: absolute;
+  top: -8px; left: 24px;
+  width: 46px; height: 16px;
+  background: rgba(214,164,74,0.55);
+  transform: rotate(-3deg);
+  border-radius: 2px;
+}
+.let-edit-banner {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(214,164,74,0.18);
+  border: 1px solid var(--mustard);
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.let-edit-banner.active { display: flex; }
+.let-edit-banner button {
+  background: none;
+  border: none;
+  color: var(--ink);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  padding: 0;
+}
+.let-edit-banner button:hover { color: var(--rose); }
+.let-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.let-field { display: flex; flex-direction: column; gap: 4px; }
+.let-field.full { grid-column: 1 / -1; }
+.let-field label {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--ink-soft); font-weight: 600;
+}
+.let-field input, .let-field select {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: white;
+  color: var(--ink);
+  outline: none;
+}
+.let-field input:focus, .let-field select:focus { border-color: var(--teal); }
+.let-submit {
+  margin-top: 14px;
+  width: 100%;
+  background: var(--ink);
+  color: white;
+  border: none;
+  padding: 11px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+}
+.let-submit:hover { background: var(--teal); }
+.let-submit:disabled { background: var(--gray); cursor: not-allowed; }
+.let-form-msg { font-size: 12px; color: var(--rose); min-height: 16px; margin-top: 6px; }
+
+/* Expense list */
+.let-list { max-width: 640px; margin: 0 auto; }
+.let-totalbar {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin: 0 4px 12px;
+  font-size: 13px; color: var(--ink-soft);
+}
+.let-totalbar strong {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--ink);
+  font-size: 15px;
+}
+.let-card {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  position: relative;
+}
+.let-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+.let-card-body { flex: 1; min-width: 0; }
+.let-card-top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.let-desc { font-weight: 600; font-size: 14px; }
+.let-amt { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; white-space: nowrap; }
+.let-meta { font-size: 12px; color: var(--ink-soft); margin-top: 3px; }
+.let-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.let-edit {
+  background: none; border: none; color: var(--line);
+  cursor: pointer; font-size: 14px; padding: 2px 4px;
+}
+.let-edit:hover { color: var(--teal); }
+.let-del {
+  background: none; border: none; color: var(--line);
+  cursor: pointer; font-size: 15px; padding: 2px 4px; flex-shrink: 0;
+}
+.let-del:hover { color: var(--rose); }
+.let-empty {
+  text-align: center; color: var(--ink-soft); font-size: 14px;
+  padding: 30px 10px;
+}
+.let-loading { text-align: center; color: var(--ink-soft); padding: 40px; font-size: 14px; }
+
+/* Tabs */
+.let-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin: 0 0 24px;
+}
+.let-tab {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 20px;
+  background: transparent;
+  border: none;
+  color: var(--ink-soft);
+  padding: 4px 16px 8px;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+}
+.let-tab.active { color: var(--ink); border-bottom-color: var(--teal); }
+.let-view { display: none; }
+.let-view.active { display: block; }
+
+/* Dashboard */
+.let-dash { max-width: 640px; margin: 0 auto; }
+.let-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 26px;
+}
+.let-stat {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 10px;
+  text-align: center;
+}
+.let-stat-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ink);
+  display: block;
+}
+.let-stat-label {
+  font-size: 11px;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+}
+.let-dash-block {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+}
+.let-dash-block-title {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 21px;
+  margin: 0 0 12px;
+}
+.let-cat-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+}
+.let-cat-filter-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-right: 2px;
+}
+.let-cat-filter select,
+.let-cat-filter-input {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: white;
+  color: var(--ink);
+  outline: none;
+}
+.let-cat-filter select:focus,
+.let-cat-filter-input:focus { border-color: var(--teal); }
+#letDashFilterYear { width: 90px; }
+.let-cat-filter-range { display: flex; align-items: center; gap: 6px; }
+.let-cat-filter-to-label { font-size: 12px; color: var(--ink-soft); }
+.let-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+.let-bar-row:last-child { margin-bottom: 0; }
+.let-bar-label {
+  width: 100px;
+  flex-shrink: 0;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.let-bar-track {
+  flex: 1;
+  background: var(--grid-line);
+  border-radius: 5px;
+  height: 12px;
+  overflow: hidden;
+}
+.let-bar-fill { display: block; height: 100%; border-radius: 5px; }
+.let-bar-amt {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  width: 68px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.let-trend {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 130px;
+  padding-top: 10px;
+}
+.let-trend-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  justify-content: flex-end;
+  min-width: 0;
+}
+.let-trend-bar {
+  width: 70%;
+  max-width: 28px;
+  background: var(--teal);
+  border-radius: 3px 3px 0 0;
+  min-height: 2px;
+}
+.let-trend-label {
+  font-size: 10px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.let-trend-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.let-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--grid-line);
+  font-size: 13px;
+}
+.let-top-row:last-child { border-bottom: none; }
+.let-top-rank {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ink-soft);
+  width: 20px;
+  flex-shrink: 0;
+}
+.let-top-desc { flex: 1; font-weight: 600; }
+.let-top-meta { color: var(--ink-soft); font-size: 12px; }
+.let-top-amt { font-family: 'JetBrains Mono', monospace; font-weight: 700; flex-shrink: 0; }
+
+/* Collapsible category chart */
+.let-cat-group { margin-bottom: 4px; }
+.let-cat-major-row { cursor: default; }
+.let-cat-toggle {
+  background: none; border: none; cursor: pointer;
+  color: var(--ink-soft); font-size: 10px; width: 14px; flex-shrink: 0;
+  transition: transform 0.15s ease;
+  padding: 0;
+}
+.let-cat-toggle.open { transform: rotate(90deg); }
+.let-cat-subs { display: none; padding-left: 22px; margin: 2px 0 10px; }
+.let-cat-subs.open { display: block; }
+.let-subbar-row { margin-bottom: 6px; }
+.let-subbar-row .let-bar-label { font-size: 12px; color: var(--ink-soft); width: 88px; }
+.let-subbar-row .let-bar-amt { font-size: 12px; width: 60px; }
+.let-subbar-row .let-bar-track { height: 8px; }
+
+/* Categories guide */
+.let-guide-hint { font-size: 12px; color: var(--ink-soft); margin: -4px 0 16px; }
+.let-guide-major {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.let-guide-major-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.let-guide-major-name {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 22px;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  flex: 1;
+  min-width: 0;
+  padding: 2px 4px;
+  border-radius: 4px;
+  outline: none;
+}
+.let-guide-major-name:focus { background: white; box-shadow: 0 0 0 1px var(--teal); }
+.let-guide-del-major {
+  background: none; border: none; color: var(--line);
+  cursor: pointer; font-size: 15px; padding: 2px 6px; flex-shrink: 0;
+}
+.let-guide-del-major:hover { color: var(--rose); }
+.let-guide-subs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.let-guide-sub-chip {
+  display: flex; align-items: center;
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 2px 4px 2px 10px;
+}
+.let-guide-sub-name {
+  border: none; background: transparent; font-size: 13px;
+  font-family: 'Inter', sans-serif; color: var(--ink);
+  padding: 3px 2px; outline: none;
+}
+.let-guide-sub-name:focus { background: white; border-radius: 4px; }
+.let-guide-sub-chip button {
+  background: none; border: none; color: var(--ink-soft);
+  cursor: pointer; font-size: 13px; padding: 0 6px; line-height: 1;
+}
+.let-guide-sub-chip button:hover { color: var(--rose); }
+.let-guide-addsub { display: flex; gap: 6px; align-items: center; }
+.let-guide-addsub input {
+  border: 1px dashed var(--line);
+  background: transparent;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  width: 150px;
+  outline: none;
+}
+.let-guide-addsub input:focus { border-color: var(--teal); }
+.let-guide-addsub button {
+  border: none; background: var(--ink); color: white;
+  width: 22px; height: 22px; border-radius: 50%;
+  cursor: pointer; font-size: 13px; line-height: 1; flex-shrink: 0;
+}
+.let-guide-addsub button:hover { background: var(--teal); }
+.let-addmajor { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+.let-addmajor input {
+  border: 1px dashed var(--line);
+  background: transparent;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  flex: 1;
+  outline: none;
+}
+.let-addmajor input:focus { border-color: var(--teal); }
+.let-addmajor button {
+  border: none; background: var(--ink); color: white;
+  width: 30px; height: 30px; border-radius: 50%;
+  cursor: pointer; font-size: 16px; line-height: 1; flex-shrink: 0;
+}
+.let-addmajor button:hover { background: var(--teal); }
+</style>
+
+<div class="let-root" id="letRoot">
+  <div class="let-toast" id="letToast"></div>
+  <div class="let-header">
+    <h1 class="let-title">Pazziuagan Family Ledger</h1>
+  </div>
+
+  <div class="let-tabs">
+    <button class="let-tab active" id="letTabLedger">Ledger</button>
+    <button class="let-tab" id="letTabDash">Dashboard</button>
+    <button class="let-tab" id="letTabCats">Categories</button>
+  </div>
+
+  <div class="let-view active" id="letViewLedger">
+    <div class="let-members" id="letMembers"></div>
+
+    <div class="let-section-label">Add an expense</div>
+    <div class="let-form">
+      <div class="let-edit-banner" id="letEditBanner">
+        <span>Editing an expense</span>
+        <button type="button" id="letCancelEdit">Cancel</button>
+      </div>
+      <div class="let-form-grid">
+        <div class="let-field full">
+          <label>What was it</label>
+          <input type="text" id="letDesc" value="Groceries at S&amp;R" placeholder="Groceries at S&amp;R" />
+        </div>
+        <div class="let-field">
+          <label>Amount</label>
+          <input type="number" id="letAmount" placeholder="0.00" step="0.01" min="0" />
+        </div>
+        <div class="let-field">
+          <label>Date</label>
+          <input type="date" id="letDate" />
+        </div>
+        <div class="let-field">
+          <label>Category</label>
+          <select id="letCategory"></select>
+        </div>
+        <div class="let-field">
+          <label>Subcategory</label>
+          <input type="text" id="letSubcategory" list="letSubcategoryList" placeholder="e.g. Electricity" maxlength="60" />
+          <datalist id="letSubcategoryList"></datalist>
+        </div>
+        <div class="let-field">
+          <label>Paid by</label>
+          <select id="letPaidBy"></select>
+        </div>
+        <div class="let-field">
+          <label>Paid with</label>
+          <select id="letPaidWith">
+            <option>Cash</option>
+            <option>Credit Card</option>
+            <option>Bank Transfer</option>
+            <option>Gcash</option>
+            <option>Check</option>
+          </select>
+        </div>
+      </div>
+      <button class="let-submit" id="letSubmit">Add to the ledger</button>
+      <div class="let-form-msg" id="letFormMsg"></div>
+    </div>
+
+    <div class="let-section-label">Recent expenses</div>
+    <div class="let-totalbar" id="letTotalBar"></div>
+    <div class="let-list" id="letList">
+      <div class="let-loading">Loading the ledger…</div>
+    </div>
+  </div>
+
+  <div class="let-view" id="letViewDash">
+    <div class="let-dash">
+      <div class="let-cat-filter">
+        <span class="let-cat-filter-label">Period</span>
+        <select id="letDashFilterMode">
+          <option value="overall">Overall (lifetime)</option>
+          <option value="month">By month</option>
+          <option value="year">By year</option>
+          <option value="range">Date range</option>
+        </select>
+        <input type="month" id="letDashFilterMonth" class="let-cat-filter-input" style="display:none" />
+        <input type="number" id="letDashFilterYear" class="let-cat-filter-input" placeholder="Year" min="2000" max="2100" step="1" style="display:none" />
+        <span class="let-cat-filter-range" id="letDashFilterRangeWrap" style="display:none">
+          <input type="date" id="letDashFilterFrom" class="let-cat-filter-input" />
+          <span class="let-cat-filter-to-label">to</span>
+          <input type="date" id="letDashFilterTo" class="let-cat-filter-input" />
+        </span>
+      </div>
+
+      <div class="let-stats" id="letStats"></div>
+
+      <div class="let-dash-block">
+        <div class="let-dash-block-title">By category</div>
+        <div id="letCatChart"></div>
+      </div>
+
+      <div class="let-dash-block">
+        <div class="let-dash-block-title" id="letTrendTitle">Last 12 months</div>
+        <div class="let-trend" id="letTrendChart"></div>
+      </div>
+
+      <div class="let-dash-block">
+        <div class="let-dash-block-title">Who paid</div>
+        <div id="letWhoChart"></div>
+      </div>
+
+      <div class="let-dash-block">
+        <div class="let-dash-block-title">Paid with</div>
+        <div id="letPaidWithChart"></div>
+      </div>
+
+      <div class="let-dash-block">
+        <div class="let-dash-block-title">Biggest expenses</div>
+        <div id="letTopList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="let-view" id="letViewCats">
+    <div class="let-dash">
+      <div class="let-dash-block">
+        <div class="let-dash-block-title">Categories guide</div>
+        <div class="let-guide-hint">Add, rename, or remove major categories and their subcategories — changes apply everywhere in the ledger.</div>
+        <div id="letCatGuide"></div>
+        <div class="let-addmajor">
+          <input type="text" id="letNewMajor" placeholder="Add major category" maxlength="40" />
+          <button id="letAddMajorBtn">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // ============================================================
+  // STORAGE BACKEND — Google Apps Script (family data lives in a Google Sheet)
+  // ============================================================
+  // 1. Create a blank Google Sheet.
+  // 2. Extensions > Apps Script, paste in the provided backend code, and deploy
+  //    it as a Web App (Execute as: Me, Who has access: Anyone).
+  // 3. Copy the deployment URL (it ends in /exec) and paste it below.
+  const REMOTE_STORAGE_URL = 'https://script.google.com/macros/s/AKfycbxRKiqmOw7tGaJj3O4wvfyHOucjoUs882BIqStJIqjKf9IyyqlPdJQVTVW9hh-wDTTB/exec';
+
+  const storage = {
+    async get(key) {
+      if (!REMOTE_STORAGE_URL || REMOTE_STORAGE_URL.indexOf('PASTE_YOUR') === 0) {
+        throw new Error('Storage backend URL is not configured yet — see the comment at the top of this file.');
+      }
+      const res = await fetch(`${REMOTE_STORAGE_URL}?key=${encodeURIComponent(key)}`);
+      if (!res.ok) throw new Error('Storage GET failed: ' + res.status);
+      const data = await res.json();
+      if (data.value === null || data.value === undefined || data.value === '') return null;
+      return { key: data.key, value: data.value };
+    },
+    async set(key, value) {
+      if (!REMOTE_STORAGE_URL || REMOTE_STORAGE_URL.indexOf('PASTE_YOUR') === 0) {
+        throw new Error('Storage backend URL is not configured yet — see the comment at the top of this file.');
+      }
+      // Sent as text/plain (fetch's default for a string body) to avoid a CORS preflight,
+      // which Google Apps Script Web Apps don't handle. The script parses it as JSON itself.
+      const res = await fetch(REMOTE_STORAGE_URL, {
+        method: 'POST',
+        body: JSON.stringify({ key, value }),
+      });
+      if (!res.ok) throw new Error('Storage POST failed: ' + res.status);
+      return res.json();
+    },
+  };
+  // ============================================================
+
+  const DEFAULT_CATEGORIES = [
+    { name: 'Education', subs: ['Extracurricular Activities', 'School Supplies', 'Tuition', 'Tutoring', 'Uniforms'] },
+    { name: 'Family & Care', subs: ['Allowances', 'Domestic Help', 'Kids', 'Personal Care', 'Pet Care'] },
+    { name: 'Food', subs: ['Dining Out', 'Food Delivery'] },
+    { name: 'Groceries', subs: ['Food', 'Household Supplies'] },
+    { name: 'Health', subs: ['Dental Expense', "Doctor's Fee", 'Gym Membership', 'Lab Expense', 'Medicine & Supplements'] },
+    { name: 'Housing', subs: ['House Repair, Maintenance & Renovation', 'Housing', 'Mortgage & Loan Payments', 'Rent/Mortgage'] },
+    { name: 'Insurance & Contributions', subs: ['Government Contributions', 'Life Insurance', 'Medical Insurance', 'Memorial'] },
+    { name: 'Lifestyle & Leisure', subs: ['AI Subscription', 'Recreation and Entertainment', 'Vacation'] },
+    { name: 'Other', subs: ['Household', 'Other'] },
+    { name: 'Shopping & Household', subs: ['Clothing', 'Furniture & Appliances', 'Online Shopping'] },
+    { name: 'Transportation', subs: ['Fuel', 'Insurance', 'Parking', 'Registration', 'Tolls', 'Vehicle Maintenance'] },
+    { name: 'Utilities', subs: ['Cellphone', 'Electricity', 'Internet', 'LPG', 'Water'] },
+  ];
+  const CATEGORIES_MIGRATION_VERSION = 2;
+  // Maps expenses saved under the old flat category list to {major, subcategory}
+  const LEGACY_CATEGORY_MAP = {
+    'AI Subscription': { major: 'Lifestyle & Leisure', sub: 'AI Subscription' },
+    'Allowances': { major: 'Family & Care', sub: 'Allowances' },
+    'Cellphone': { major: 'Utilities', sub: 'Cellphone' },
+    'Clothing': { major: 'Shopping & Household', sub: 'Clothing' },
+    'Dining Out': { major: 'Food', sub: 'Dining Out' },
+    'Domestic Help': { major: 'Family & Care', sub: 'Domestic Help' },
+    'Education': { major: 'Family & Care', sub: 'Education' },
+    'Electricity': { major: 'Utilities', sub: 'Electricity' },
+    'Entertainment': { major: 'Lifestyle & Leisure', sub: 'Recreation and Entertainment' },
+    'Food Delivery': { major: 'Food', sub: 'Food Delivery' },
+    'Furniture & Appliances': { major: 'Shopping & Household', sub: 'Furniture & Appliances' },
+    'Government Contributions': { major: 'Insurance & Contributions', sub: 'Government Contributions' },
+    'Groceries': { major: 'Groceries', sub: 'Food' },
+    'Healthcare': { major: 'Health', sub: 'Healthcare' },
+    'House Repair, Maintenance & Renovation': { major: 'Housing', sub: 'House Repair, Maintenance & Renovation' },
+    'Household': { major: 'Other', sub: 'Household' },
+    'Household Supplies': { major: 'Groceries', sub: 'Household Supplies' },
+    'Housing': { major: 'Housing', sub: 'Housing' },
+    'Internet': { major: 'Utilities', sub: 'Internet' },
+    'Kids': { major: 'Family & Care', sub: 'Kids' },
+    'Life Insurance': { major: 'Insurance & Contributions', sub: 'Life Insurance' },
+    'LPG': { major: 'Utilities', sub: 'LPG' },
+    'Medical Insurance': { major: 'Insurance & Contributions', sub: 'Medical Insurance' },
+    'Memorial': { major: 'Insurance & Contributions', sub: 'Memorial' },
+    'Mortgage & Loan Payments': { major: 'Housing', sub: 'Mortgage & Loan Payments' },
+    'Online Shopping': { major: 'Shopping & Household', sub: 'Online Shopping' },
+    'Other': { major: 'Other', sub: 'Other' },
+    'Pet Care': { major: 'Family & Care', sub: 'Pet Care' },
+    'Recreation and Entertainment': { major: 'Lifestyle & Leisure', sub: 'Recreation and Entertainment' },
+    'Rent/Mortgage': { major: 'Housing', sub: 'Rent/Mortgage' },
+    'Transport': { major: 'Transportation', sub: 'Transport' },
+    'Utilities': { major: 'Utilities', sub: 'Utilities' },
+    'Vacation': { major: 'Lifestyle & Leisure', sub: 'Vacation' },
+    'Vehicle & Transportation': { major: 'Transportation', sub: 'Vehicle & Transportation' },
+    'Water': { major: 'Utilities', sub: 'Water' },
+  };
+  const CATEGORY_COLORS = ['#3E7C6B','#D6A44A','#7A5C7E','#4A5D73','#C1666B','#C97B3F','#5B8AA6','#7C8B5A','#8A8578','#B5533C'];
+  const AVATAR_COLORS = ['#3E7C6B','#D6A44A','#7A5C7E','#4A5D73','#C1666B','#C97B3F','#5B8AA6','#7C8B5A'];
+
+  let members = [];
+  let expenses = [];
+  let categoriesData = [];
+  let ready = false;
+  let editingId = null;
+  let expandedCategoryGroups = new Set();
+  let dashFilterMode = 'overall';
+  let dashFilterMonth = '';
+  let dashFilterYear = '';
+  let dashFilterFrom = '';
+  let dashFilterTo = '';
+  let lastPaidBy = '';
+  let lastPaidWith = 'Cash';
+
+  function getDashFilteredExpenses() {
+    if (dashFilterMode === 'month' && dashFilterMonth) {
+      return expenses.filter(e => e.date.slice(0, 7) === dashFilterMonth);
+    }
+    if (dashFilterMode === 'year' && dashFilterYear) {
+      return expenses.filter(e => e.date.slice(0, 4) === String(dashFilterYear));
+    }
+    if (dashFilterMode === 'range' && dashFilterFrom && dashFilterTo) {
+      return expenses.filter(e => e.date >= dashFilterFrom && e.date <= dashFilterTo);
+    }
+    return expenses;
+  }
+
+  function handleDashFilterModeChange() {
+    dashFilterMode = document.getElementById('letDashFilterMode').value;
+    const monthInput = document.getElementById('letDashFilterMonth');
+    const yearInput = document.getElementById('letDashFilterYear');
+    const rangeWrap = document.getElementById('letDashFilterRangeWrap');
+    monthInput.style.display = dashFilterMode === 'month' ? 'inline-block' : 'none';
+    yearInput.style.display = dashFilterMode === 'year' ? 'inline-block' : 'none';
+    rangeWrap.style.display = dashFilterMode === 'range' ? 'flex' : 'none';
+
+    const now = new Date();
+    if (dashFilterMode === 'month' && !dashFilterMonth) {
+      dashFilterMonth = now.toISOString().slice(0, 7);
+      monthInput.value = dashFilterMonth;
+    }
+    if (dashFilterMode === 'year' && !dashFilterYear) {
+      dashFilterYear = String(now.getFullYear());
+      yearInput.value = dashFilterYear;
+    }
+    if (dashFilterMode === 'range' && (!dashFilterFrom || !dashFilterTo)) {
+      dashFilterFrom = dashFilterFrom || `${now.getFullYear()}-01-01`;
+      dashFilterTo = dashFilterTo || now.toISOString().slice(0, 10);
+      document.getElementById('letDashFilterFrom').value = dashFilterFrom;
+      document.getElementById('letDashFilterTo').value = dashFilterTo;
+    }
+    renderDashboard();
+  }
+
+  // Builds the time buckets for the trend chart, adapting to the selected period:
+  // a rolling 12 months overall, days within a chosen month, months within a chosen year,
+  // or days/months spanning a custom date range (days if the range is a month or less).
+  function buildTrendBuckets(filteredExpenses) {
+    const now = new Date();
+
+    if (dashFilterMode === 'month' && dashFilterMonth) {
+      const [y, m] = dashFilterMonth.split('-').map(Number);
+      const daysInMonth = new Date(y, m, 0).getDate();
+      const buckets = [];
+      for (let d = 1; d <= daysInMonth; d++) {
+        buckets.push({ key: `${dashFilterMonth}-${String(d).padStart(2, '0')}`, label: String(d), total: 0 });
+      }
+      filteredExpenses.forEach(e => {
+        const b = buckets.find(b => b.key === e.date);
+        if (b) b.total += e.amount;
+      });
+      const title = 'Daily spending — ' + new Date(y, m - 1, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+      return { buckets, title };
+    }
+
+    if (dashFilterMode === 'year' && dashFilterYear) {
+      const y = parseInt(dashFilterYear, 10);
+      const buckets = [];
+      for (let m = 0; m < 12; m++) {
+        buckets.push({ key: `${y}-${String(m + 1).padStart(2, '0')}`, label: new Date(y, m, 1).toLocaleDateString(undefined, { month: 'short' }), total: 0 });
+      }
+      filteredExpenses.forEach(e => {
+        const key = e.date.slice(0, 7);
+        const b = buckets.find(b => b.key === key);
+        if (b) b.total += e.amount;
+      });
+      return { buckets, title: 'Monthly spending — ' + y };
+    }
+
+    if (dashFilterMode === 'range' && dashFilterFrom && dashFilterTo) {
+      const fromD = new Date(dashFilterFrom + 'T00:00:00');
+      const toD = new Date(dashFilterTo + 'T00:00:00');
+      const spanDays = Math.round((toD - fromD) / 86400000) + 1;
+      const rangeLabel = fmtDate(dashFilterFrom) + ' – ' + fmtDate(dashFilterTo);
+      if (spanDays > 0 && spanDays <= 31) {
+        const buckets = [];
+        for (let i = 0; i < spanDays; i++) {
+          const d = new Date(fromD);
+          d.setDate(d.getDate() + i);
+          buckets.push({ key: d.toISOString().slice(0, 10), label: String(d.getDate()), total: 0 });
+        }
+        filteredExpenses.forEach(e => {
+          const b = buckets.find(b => b.key === e.date);
+          if (b) b.total += e.amount;
+        });
+        return { buckets, title: 'Daily spending — ' + rangeLabel };
+      }
+      const buckets = [];
+      const cursor = new Date(fromD.getFullYear(), fromD.getMonth(), 1);
+      const endCursor = new Date(toD.getFullYear(), toD.getMonth(), 1);
+      while (cursor <= endCursor) {
+        buckets.push({ key: cursor.getFullYear() + '-' + String(cursor.getMonth() + 1).padStart(2, '0'), label: cursor.toLocaleDateString(undefined, { month: 'short', year: '2-digit' }), total: 0 });
+        cursor.setMonth(cursor.getMonth() + 1);
+      }
+      filteredExpenses.forEach(e => {
+        const key = e.date.slice(0, 7);
+        const b = buckets.find(b => b.key === key);
+        if (b) b.total += e.amount;
+      });
+      return { buckets, title: 'Monthly spending — ' + rangeLabel };
+    }
+
+    // Overall: rolling last 12 months
+    const buckets = [];
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      buckets.push({ key: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'), label: d.toLocaleDateString(undefined, { month: 'short' }), total: 0 });
+    }
+    filteredExpenses.forEach(e => {
+      const key = e.date.slice(0, 7);
+      const b = buckets.find(b => b.key === key);
+      if (b) b.total += e.amount;
+    });
+    return { buckets, title: 'Last 12 months' };
+  }
+
+  function sortCategories() {
+    categoriesData.sort((a, b) => a.name.localeCompare(b.name));
+    categoriesData.forEach(g => g.subs.sort((a, b) => a.localeCompare(b)));
+  }
+
+  // Brings a previously-saved categoriesData structure in line with the latest defaults
+  // (e.g. promoting a subcategory to its own major) without discarding custom edits.
+  // Applies one-time structural updates to categoriesData based on a stored version number,
+  // so each step runs exactly once and later manual edits in the Categories tab are respected.
+  function migrateCategories(fromVersion) {
+    let changed = false;
+    let version = fromVersion;
+
+    if (version < 1) {
+      // v1: promote Education out of Family & Care into its own major category
+      const famCare = categoriesData.find(g => g.name === 'Family & Care');
+      if (famCare && famCare.subs.includes('Education')) {
+        famCare.subs = famCare.subs.filter(s => s !== 'Education');
+        changed = true;
+      }
+      if (!categoriesData.some(g => g.name === 'Education')) {
+        categoriesData.push({ name: 'Education', subs: ['Allowances', 'Miscellaneous', 'Tuition'] });
+        changed = true;
+      }
+      version = 1;
+    }
+
+    if (version < 2) {
+      // v2: Transportation gets real expense-type subcategories instead of the generic placeholder
+      const transport = categoriesData.find(g => g.name === 'Transportation');
+      if (transport) {
+        transport.subs = transport.subs.filter(s => s !== 'Vehicle & Transportation');
+        ['Fuel', 'Insurance', 'Parking', 'Registration', 'Tolls', 'Vehicle Maintenance'].forEach(s => {
+          if (!transport.subs.includes(s)) transport.subs.push(s);
+        });
+        changed = true;
+      }
+      // v2: Education gets real school-related subcategories
+      const edu = categoriesData.find(g => g.name === 'Education');
+      if (edu) {
+        edu.subs = ['Extracurricular Activities', 'School Supplies', 'Tuition', 'Tutoring', 'Uniforms'];
+        changed = true;
+      }
+      // v2: Family & Care gets a Personal Care subcategory
+      const famCare2 = categoriesData.find(g => g.name === 'Family & Care');
+      if (famCare2 && !famCare2.subs.includes('Personal Care')) {
+        famCare2.subs.push('Personal Care');
+        changed = true;
+      }
+      version = 2;
+    }
+
+    if (changed) sortCategories();
+    return { changed, version };
+  }
+
+  function subsFor(major) {
+    const g = categoriesData.find(g => g.name === major);
+    return g ? g.subs : [];
+  }
+
+  function migrateExpenses() {
+    let changed = false;
+    expenses.forEach(ex => {
+      if (ex.subcategory === undefined) {
+        const mapped = LEGACY_CATEGORY_MAP[ex.category];
+        if (mapped) {
+          ex.category = mapped.major;
+          ex.subcategory = mapped.sub;
+        } else {
+          ex.subcategory = ex.category || '';
+          ex.category = 'Other';
+        }
+        changed = true;
+      }
+      // Reclassify records still pointing at the pre-Groceries-major structure
+      if (ex.category === 'Food' && ex.subcategory === 'Groceries') {
+        ex.category = 'Groceries';
+        ex.subcategory = 'Food';
+        changed = true;
+      }
+      if (ex.category === 'Shopping & Household' && ex.subcategory === 'Household Supplies') {
+        ex.category = 'Groceries';
+        changed = true;
+      }
+      // Reclassify records still pointing at the pre-Education-major structure
+      if (ex.category === 'Family & Care' && ex.subcategory === 'Education') {
+        ex.category = 'Education';
+        changed = true;
+      }
+    });
+    return changed;
+  }
+
+  function colorForName(name) {
+    let h = 0;
+    for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+    return AVATAR_COLORS[h % AVATAR_COLORS.length];
+  }
+  function categoryColor(catName) {
+    let h = 0;
+    for (let i = 0; i < catName.length; i++) h = (h * 31 + catName.charCodeAt(i)) >>> 0;
+    return CATEGORY_COLORS[h % CATEGORY_COLORS.length];
+  }
+  // Blends a hex color toward white by `amt` (0-1) to create a lighter tint for subcategory bars
+  function lightenColor(hex, amt) {
+    const num = parseInt(hex.replace('#', ''), 16);
+    const r = Math.round(((num >> 16) & 255) + (255 - ((num >> 16) & 255)) * amt);
+    const g = Math.round(((num >> 8) & 255) + (255 - ((num >> 8) & 255)) * amt);
+    const b = Math.round((num & 255) + (255 - (num & 255)) * amt);
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+  function initials(name) {
+    return name.trim().split(/\s+/).map(p => p[0]).slice(0,2).join('').toUpperCase();
+  }
+  function fmtMoney(n) {
+    const sign = n < 0 ? '-' : '';
+    return sign + '$' + Math.abs(n).toFixed(2);
+  }
+  function fmtDate(d) {
+    try {
+      const dt = new Date(d + 'T00:00:00');
+      return dt.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    } catch(e) { return d; }
+  }
+  function uid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+  }
+
+  async function loadData() {
+    try {
+      const m = await storage.get('members');
+      members = m ? JSON.parse(m.value) : ['Mom', 'Dad'];
+    } catch (e) { members = ['Mom', 'Dad']; }
+    let isFreshSeed = false;
+    try {
+      const c = await storage.get('categories');
+      if (c) {
+        categoriesData = JSON.parse(c.value);
+      } else {
+        categoriesData = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
+        isFreshSeed = true;
+        await saveCategories();
+      }
+    } catch (e) { categoriesData = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES)); }
+
+    let migVersion = CATEGORIES_MIGRATION_VERSION;
+    if (!isFreshSeed) {
+      try {
+        const v = await storage.get('categoriesMigrationVersion');
+        migVersion = v ? (parseInt(v.value, 10) || 0) : 0;
+      } catch (e) { migVersion = 0; }
+    }
+    const migResult = migrateCategories(migVersion);
+    if (migResult.changed) {
+      await saveCategories();
+    }
+    if (migResult.version !== migVersion || isFreshSeed) {
+      try { await storage.set('categoriesMigrationVersion', String(migResult.version)); }
+      catch (e) { console.error('Failed to save categories migration version', e); }
+    }
+
+    try {
+      const ex = await storage.get('expenses');
+      expenses = ex ? JSON.parse(ex.value) : [];
+    } catch (e) { expenses = []; }
+    if (migrateExpenses()) {
+      await saveExpenses();
+    }
+    ready = true;
+  }
+
+  // Retries a storage write once after a short delay before giving up — smooths over
+  // transient network hiccups instead of immediately surfacing an error to the user.
+  async function saveWithRetry(key, value, label) {
+    if (!REMOTE_STORAGE_URL || REMOTE_STORAGE_URL.indexOf('PASTE_YOUR') === 0) {
+      console.error(`Failed to save ${label}: the storage backend URL hasn't been configured yet. See the comment at the top of the <script> for setup steps.`);
+      return false;
+    }
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        await storage.set(key, value);
+        return true;
+      } catch (e) {
+        console.error(`Failed to save ${label} (attempt ${attempt}):`, e && e.message ? e.message : e, e);
+        if (attempt === 1) {
+          await new Promise(r => setTimeout(r, 700));
+        }
+      }
+    }
+    return false;
+  }
+
+  async function saveMembers() {
+    return saveWithRetry('members', JSON.stringify(members), 'members');
+  }
+  async function saveExpenses() {
+    return saveWithRetry('expenses', JSON.stringify(expenses), 'expenses');
+  }
+  async function saveCategories() {
+    return saveWithRetry('categories', JSON.stringify(categoriesData), 'categories');
+  }
+
+  let toastTimeout = null;
+  function showToast(message, type) {
+    const el = document.getElementById('letToast');
+    if (!el) return;
+    el.textContent = message;
+    el.className = 'let-toast show' + (type === 'error' ? ' error' : '');
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => { el.classList.remove('show'); }, type === 'error' ? 6000 : 2200);
+  }
+
+  function renderMembers() {
+    const el = document.getElementById('letMembers');
+    el.innerHTML = '';
+    members.forEach(name => {
+      const chip = document.createElement('div');
+      chip.className = 'let-chip';
+      chip.innerHTML = `<span class="let-avatar" style="background:${colorForName(name)}">${initials(name)}</span><span>${escapeHtml(name)}</span>`;
+      const btn = document.createElement('button');
+      btn.textContent = '×';
+      btn.title = 'Remove ' + name;
+      btn.onclick = async () => {
+        if (!confirm(`Remove ${name} from the family list? Past expenses stay on record.`)) return;
+        members = members.filter(m => m !== name);
+        const ok = await saveMembers();
+        showToast(ok ? `Removed ${name}` : "Couldn't save — check your connection and try again", ok ? 'success' : 'error');
+        renderAll();
+      };
+      chip.appendChild(btn);
+      el.appendChild(chip);
+    });
+    const addWrap = document.createElement('div');
+    addWrap.className = 'let-addmember';
+    addWrap.innerHTML = `<input type="text" id="letNewMember" placeholder="Add family member" maxlength="24" />`;
+    const addBtn = document.createElement('button');
+    addBtn.textContent = '+';
+    addBtn.onclick = addMember;
+    addWrap.appendChild(addBtn);
+    el.appendChild(addWrap);
+    document.getElementById('letNewMember').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') addMember();
+    });
+  }
+
+  async function addMember() {
+    const input = document.getElementById('letNewMember');
+    const name = input.value.trim();
+    if (!name) return;
+    if (members.includes(name)) { input.value = ''; return; }
+    members.push(name);
+    input.value = '';
+    const ok = await saveMembers();
+    showToast(ok ? `Added ${name}` : "Couldn't save — check your connection and try again", ok ? 'success' : 'error');
+    renderAll();
+  }
+
+  function renderFormOptions() {
+    const catSel = document.getElementById('letCategory');
+    catSel.innerHTML = categoriesData.map(g => `<option value="${escapeHtml(g.name)}">${escapeHtml(g.name)}</option>`).join('');
+    if (!editingId && categoriesData.some(g => g.name === 'Groceries')) {
+      catSel.value = 'Groceries';
+    }
+
+    const paidSel = document.getElementById('letPaidBy');
+    paidSel.innerHTML = members.map(m => `<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join('');
+    if (!editingId && lastPaidBy && members.includes(lastPaidBy)) {
+      paidSel.value = lastPaidBy;
+    }
+
+    updateSubcategoryList();
+    if (!catSel.dataset.wired) {
+      catSel.addEventListener('change', handleCategoryChange);
+      catSel.dataset.wired = '1';
+    }
+
+    if (!document.getElementById('letDate').value) {
+      document.getElementById('letDate').value = new Date().toISOString().slice(0,10);
+    }
+  }
+
+  function updateSubcategoryList() {
+    const major = document.getElementById('letCategory').value;
+    const list = document.getElementById('letSubcategoryList');
+    const subs = subsFor(major);
+    list.innerHTML = subs.map(s => `<option value="${escapeHtml(s)}"></option>`).join('');
+    const subInput = document.getElementById('letSubcategory');
+    const defaultSub = major === 'Groceries' ? 'Household Supplies' : subs[0];
+    subInput.placeholder = defaultSub ? `e.g. ${defaultSub}` : 'e.g. Electricity';
+    subInput.dataset.default = defaultSub || '';
+  }
+
+  function handleCategoryChange() {
+    updateSubcategoryList();
+    // The old subcategory almost certainly doesn't belong to the newly picked major, so clear it
+    document.getElementById('letSubcategory').value = '';
+  }
+
+  function renderExpenses() {
+    const listEl = document.getElementById('letList');
+    const barEl = document.getElementById('letTotalBar');
+    if (expenses.length === 0) {
+      listEl.innerHTML = '<div class="let-empty">No expenses yet — add the first one above.</div>';
+      barEl.innerHTML = '';
+      return;
+    }
+    const total = expenses.reduce((s, e) => s + e.amount, 0);
+    const now = new Date();
+    const thisMonth = expenses.filter(e => {
+      const d = new Date(e.date + 'T00:00:00');
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    }).reduce((s, e) => s + e.amount, 0);
+    barEl.innerHTML = `<span>${expenses.length} expense${expenses.length===1?'':'s'} logged</span><span>this month: <strong>${fmtMoney(thisMonth)}</strong> &nbsp;·&nbsp; all time: <strong>${fmtMoney(total)}</strong></span>`;
+
+    const sorted = [...expenses].sort((a,b) => (b.date + b.createdAt).localeCompare(a.date + a.createdAt));
+    listEl.innerHTML = '';
+    sorted.forEach(ex => {
+      const card = document.createElement('div');
+      card.className = 'let-card';
+      card.innerHTML = `
+        <span class="let-dot" style="background:${categoryColor(ex.category)}"></span>
+        <div class="let-card-body">
+          <div class="let-card-top">
+            <span class="let-desc">${escapeHtml(ex.description)}</span>
+            <span class="let-amt">${fmtMoney(ex.amount)}</span>
+          </div>
+          <div class="let-meta">${escapeHtml(ex.category)}${ex.subcategory ? ' – ' + escapeHtml(ex.subcategory) : ''} · paid by ${escapeHtml(ex.paidBy)}${ex.paidWith ? ' via ' + escapeHtml(ex.paidWith) : ''} · ${fmtDate(ex.date)}</div>
+        </div>
+        <div class="let-card-actions">
+          <button class="let-edit" title="Edit">✎</button>
+          <button class="let-del" title="Delete">✕</button>
+        </div>
+      `;
+      card.querySelector('.let-edit').onclick = () => startEdit(ex);
+      card.querySelector('.let-del').onclick = async () => {
+        if (!confirm('Delete this expense?')) return;
+        expenses = expenses.filter(e => e.id !== ex.id);
+        const ok = await saveExpenses();
+        showToast(ok ? 'Expense deleted' : "Couldn't save — check your connection and try again", ok ? 'success' : 'error');
+        renderAll();
+      };
+      listEl.appendChild(card);
+    });
+  }
+
+  function escapeHtml(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function renderDashboard() {
+    const statsEl = document.getElementById('letStats');
+    const catEl = document.getElementById('letCatChart');
+    const trendEl = document.getElementById('letTrendChart');
+    const trendTitleEl = document.getElementById('letTrendTitle');
+    const whoEl = document.getElementById('letWhoChart');
+    const paidWithEl = document.getElementById('letPaidWithChart');
+    const topEl = document.getElementById('letTopList');
+
+    if (expenses.length === 0) {
+      statsEl.innerHTML = '';
+      catEl.innerHTML = trendEl.innerHTML = whoEl.innerHTML = paidWithEl.innerHTML = topEl.innerHTML =
+        '<div class="let-empty">Add a few expenses to see the dashboard fill in.</div>';
+      return;
+    }
+
+    // Everything below respects the Period filter at the top of the dashboard
+    const filtered = getDashFilteredExpenses();
+
+    if (filtered.length === 0) {
+      statsEl.innerHTML = '';
+      catEl.innerHTML = whoEl.innerHTML = paidWithEl.innerHTML = topEl.innerHTML =
+        '<div class="let-empty">No expenses in this period.</div>';
+      trendTitleEl.textContent = buildTrendBuckets(filtered).title;
+      trendEl.innerHTML = '<div class="let-empty">No expenses in this period.</div>';
+      return;
+    }
+
+    const total = filtered.reduce((s, e) => s + e.amount, 0);
+    const avg = total / filtered.length;
+
+    // By category
+    const byCat = {};
+    filtered.forEach(e => { byCat[e.category] = (byCat[e.category] || 0) + e.amount; });
+    const catEntries = Object.entries(byCat).sort((a,b) => b[1]-a[1]);
+    const topCatName = catEntries.length ? catEntries[0][0] : '—';
+    const maxCat = catEntries.length ? catEntries[0][1] : 1;
+
+    // Stat cards
+    statsEl.innerHTML = `
+      <div class="let-stat"><span class="let-stat-val">${fmtMoney(total)}</span><span class="let-stat-label">Total spent</span></div>
+      <div class="let-stat"><span class="let-stat-val">${fmtMoney(avg)}</span><span class="let-stat-label">Avg / expense</span></div>
+      <div class="let-stat"><span class="let-stat-val" style="font-size:15px;">${escapeHtml(topCatName)}</span><span class="let-stat-label">Top category</span></div>
+    `;
+
+    // Category bars (collapsible, with subcategory breakdown)
+    const bySub = {};
+    filtered.forEach(e => {
+      bySub[e.category] = bySub[e.category] || {};
+      const subKey = e.subcategory || 'Uncategorized';
+      bySub[e.category][subKey] = (bySub[e.category][subKey] || 0) + e.amount;
+    });
+    catEl.innerHTML = catEntries.map(([name, amt]) => {
+      const subEntries = Object.entries(bySub[name] || {}).sort((a,b) => b[1]-a[1]);
+      const isOpen = expandedCategoryGroups.has(name);
+      const subColor = lightenColor(categoryColor(name), 0.5);
+      return `
+        <div class="let-cat-group">
+          <div class="let-bar-row let-cat-major-row">
+            <button class="let-cat-toggle ${isOpen ? 'open' : ''}" data-major="${escapeHtml(name)}" ${subEntries.length ? '' : 'style="visibility:hidden"'}>&#9656;</button>
+            <span class="let-bar-label">${escapeHtml(name)}</span>
+            <span class="let-bar-track"><span class="let-bar-fill" style="width:${Math.max(2, amt / maxCat * 100)}%; background:${categoryColor(name)}"></span></span>
+            <span class="let-bar-amt">${fmtMoney(amt)}</span>
+          </div>
+          <div class="let-cat-subs ${isOpen ? 'open' : ''}">
+            ${subEntries.map(([sub, samt]) => `
+              <div class="let-bar-row let-subbar-row">
+                <span class="let-bar-label">${escapeHtml(sub)}</span>
+                <span class="let-bar-track"><span class="let-bar-fill" style="width:${Math.max(2, samt / maxCat * 100)}%; background:${subColor}"></span></span>
+                <span class="let-bar-amt">${fmtMoney(samt)}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+    catEl.querySelectorAll('.let-cat-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const major = btn.dataset.major;
+        if (expandedCategoryGroups.has(major)) expandedCategoryGroups.delete(major);
+        else expandedCategoryGroups.add(major);
+        renderDashboard();
+      });
+    });
+
+    // Trend (adapts to the selected period: rolling 12 months, days in a month, months in a year, or a custom range)
+    const { buckets, title } = buildTrendBuckets(filtered);
+    trendTitleEl.textContent = title;
+    const maxBucket = Math.max(1, ...buckets.map(b => b.total));
+    trendEl.innerHTML = buckets.map(b => `
+      <div class="let-trend-col" title="${escapeHtml(b.label)}: ${fmtMoney(b.total)}">
+        <span class="let-trend-val">${b.total > 0 ? '$' + Math.round(b.total) : ''}</span>
+        <div class="let-trend-bar" style="height:${Math.max(2, b.total / maxBucket * 100)}%"></div>
+        <span class="let-trend-label">${escapeHtml(b.label)}</span>
+      </div>
+    `).join('');
+
+    // Who paid
+    const byWho = {};
+    members.forEach(m => byWho[m] = 0);
+    filtered.forEach(e => { if (byWho[e.paidBy] !== undefined) byWho[e.paidBy] += e.amount; else byWho[e.paidBy] = e.amount; });
+    const whoEntries = Object.entries(byWho).sort((a,b) => b[1]-a[1]);
+    const maxWho = Math.max(1, ...whoEntries.map(([,v]) => v));
+    whoEl.innerHTML = whoEntries.length ? whoEntries.map(([name, amt]) => `
+      <div class="let-bar-row">
+        <span class="let-bar-label">${escapeHtml(name)}</span>
+        <span class="let-bar-track"><span class="let-bar-fill" style="width:${Math.max(4, amt / maxWho * 100)}%; background:${colorForName(name)}"></span></span>
+        <span class="let-bar-amt">${fmtMoney(amt)}</span>
+      </div>
+    `).join('') : '<div class="let-empty">No family members yet.</div>';
+
+    // Paid with
+    const byPaidWith = {};
+    filtered.forEach(e => {
+      const pw = e.paidWith || 'Unspecified';
+      byPaidWith[pw] = (byPaidWith[pw] || 0) + e.amount;
+    });
+    const paidWithEntries = Object.entries(byPaidWith).sort((a,b) => b[1]-a[1]);
+    const maxPaidWith = Math.max(1, ...paidWithEntries.map(([,v]) => v));
+    paidWithEl.innerHTML = paidWithEntries.length ? paidWithEntries.map(([name, amt]) => `
+      <div class="let-bar-row">
+        <span class="let-bar-label">${escapeHtml(name)}</span>
+        <span class="let-bar-track"><span class="let-bar-fill" style="width:${Math.max(4, amt / maxPaidWith * 100)}%; background:${categoryColor(name)}"></span></span>
+        <span class="let-bar-amt">${fmtMoney(amt)}</span>
+      </div>
+    `).join('') : '<div class="let-empty">No payment methods recorded yet.</div>';
+
+    // Top 5 expenses
+    const top5 = [...filtered].sort((a,b) => b.amount - a.amount).slice(0, 5);
+    topEl.innerHTML = top5.map((e, i) => `
+      <div class="let-top-row">
+        <span class="let-top-rank">${i+1}</span>
+        <span class="let-top-desc">${escapeHtml(e.description)}</span>
+        <span class="let-top-meta">${escapeHtml(e.category)}${e.subcategory ? ' – ' + escapeHtml(e.subcategory) : ''} · ${fmtDate(e.date)}</span>
+        <span class="let-top-amt">${fmtMoney(e.amount)}</span>
+      </div>
+    `).join('');
+  }
+
+  function switchTab(tab) {
+    const map = {
+      ledger: ['letTabLedger', 'letViewLedger'],
+      dashboard: ['letTabDash', 'letViewDash'],
+      categories: ['letTabCats', 'letViewCats'],
+    };
+    ['ledger', 'dashboard', 'categories'].forEach(t => {
+      const [tabId, viewId] = map[t];
+      document.getElementById(tabId).classList.toggle('active', t === tab);
+      document.getElementById(viewId).classList.toggle('active', t === tab);
+    });
+  }
+
+  function renderCategoryGuide() {
+    const el = document.getElementById('letCatGuide');
+    if (categoriesData.length === 0) {
+      el.innerHTML = '<div class="let-empty">No categories yet — add one below.</div>';
+      return;
+    }
+    el.innerHTML = '';
+    categoriesData.forEach(group => {
+      const card = document.createElement('div');
+      card.className = 'let-guide-major';
+
+      const head = document.createElement('div');
+      head.className = 'let-guide-major-head';
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.className = 'let-guide-major-name';
+      nameInput.value = group.name;
+      nameInput.maxLength = 40;
+      nameInput.addEventListener('change', () => renameMajor(group.name, nameInput.value.trim()));
+      const delBtn = document.createElement('button');
+      delBtn.className = 'let-guide-del-major';
+      delBtn.title = 'Delete category';
+      delBtn.textContent = '✕';
+      delBtn.addEventListener('click', () => deleteMajor(group.name));
+      head.appendChild(nameInput);
+      head.appendChild(delBtn);
+      card.appendChild(head);
+
+      const subsWrap = document.createElement('div');
+      subsWrap.className = 'let-guide-subs';
+      group.subs.forEach(sub => {
+        const chip = document.createElement('span');
+        chip.className = 'let-guide-sub-chip';
+        const subInput = document.createElement('input');
+        subInput.type = 'text';
+        subInput.className = 'let-guide-sub-name';
+        subInput.value = sub;
+        subInput.maxLength = 60;
+        subInput.style.width = Math.max(3, sub.length) + 'ch';
+        subInput.addEventListener('change', () => renameSub(group.name, sub, subInput.value.trim()));
+        const subDelBtn = document.createElement('button');
+        subDelBtn.textContent = '×';
+        subDelBtn.title = 'Remove subcategory';
+        subDelBtn.addEventListener('click', () => deleteSub(group.name, sub));
+        chip.appendChild(subInput);
+        chip.appendChild(subDelBtn);
+        subsWrap.appendChild(chip);
+      });
+      card.appendChild(subsWrap);
+
+      const addSubRow = document.createElement('div');
+      addSubRow.className = 'let-guide-addsub';
+      const newSubInput = document.createElement('input');
+      newSubInput.type = 'text';
+      newSubInput.placeholder = 'Add subcategory';
+      newSubInput.maxLength = 60;
+      const addSubBtn = document.createElement('button');
+      addSubBtn.textContent = '+';
+      const doAddSub = () => {
+        const val = newSubInput.value.trim();
+        if (!val) return;
+        addSub(group.name, val);
+      };
+      addSubBtn.addEventListener('click', doAddSub);
+      newSubInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') doAddSub(); });
+      addSubRow.appendChild(newSubInput);
+      addSubRow.appendChild(addSubBtn);
+      card.appendChild(addSubRow);
+
+      el.appendChild(card);
+    });
+  }
+
+  async function renameMajor(oldName, newName) {
+    if (!newName || newName === oldName) { renderCategoryGuide(); return; }
+    if (categoriesData.some(g => g.name === newName)) {
+      alert(`"${newName}" already exists.`);
+      renderCategoryGuide();
+      return;
+    }
+    const group = categoriesData.find(g => g.name === oldName);
+    if (!group) return;
+    const affectedExpenses = expenses.filter(e => e.category === oldName);
+    group.name = newName;
+    affectedExpenses.forEach(e => { e.category = newName; });
+    sortCategories();
+    const ok = (await saveCategories()) && (await saveExpenses());
+    if (ok) {
+      showToast(`Renamed to "${newName}"`);
+    } else {
+      group.name = oldName;
+      affectedExpenses.forEach(e => { e.category = oldName; });
+      sortCategories();
+      showToast("Couldn't save — check your connection and try again", 'error');
+    }
+    renderAll();
+  }
+
+  async function renameSub(majorName, oldSub, newSub) {
+    if (!newSub || newSub === oldSub) { renderCategoryGuide(); return; }
+    const group = categoriesData.find(g => g.name === majorName);
+    if (!group) return;
+    if (group.subs.includes(newSub)) {
+      alert(`"${newSub}" already exists under ${majorName}.`);
+      renderCategoryGuide();
+      return;
+    }
+    const idx = group.subs.indexOf(oldSub);
+    const affectedExpenses = expenses.filter(e => e.category === majorName && e.subcategory === oldSub);
+    if (idx !== -1) group.subs[idx] = newSub;
+    affectedExpenses.forEach(e => { e.subcategory = newSub; });
+    sortCategories();
+    const ok = (await saveCategories()) && (await saveExpenses());
+    if (ok) {
+      showToast(`Renamed to "${newSub}"`);
+    } else {
+      if (idx !== -1) group.subs[idx] = oldSub;
+      affectedExpenses.forEach(e => { e.subcategory = oldSub; });
+      sortCategories();
+      showToast("Couldn't save — check your connection and try again", 'error');
+    }
+    renderAll();
+  }
+
+  async function addMajor(name) {
+    if (categoriesData.some(g => g.name === name)) { alert(`"${name}" already exists.`); return; }
+    categoriesData.push({ name, subs: [] });
+    sortCategories();
+    const ok = await saveCategories();
+    if (ok) {
+      showToast(`Added "${name}"`);
+    } else {
+      categoriesData = categoriesData.filter(g => g.name !== name);
+      showToast("Couldn't save — check your connection and try again", 'error');
+    }
+    renderAll();
+  }
+
+  async function deleteMajor(name) {
+    const count = expenses.filter(e => e.category === name).length;
+    const msg = count > 0
+      ? `${count} expense${count === 1 ? '' : 's'} currently use "${name}". Deleting it removes it from the picklist but keeps the label on those existing expenses. Delete anyway?`
+      : `Delete category "${name}"?`;
+    if (!confirm(msg)) return;
+    const removed = categoriesData.find(g => g.name === name);
+    const removedIndex = categoriesData.indexOf(removed);
+    categoriesData = categoriesData.filter(g => g.name !== name);
+    const ok = await saveCategories();
+    if (ok) {
+      showToast(`Deleted "${name}"`);
+    } else {
+      if (removed) categoriesData.splice(removedIndex, 0, removed);
+      showToast("Couldn't save — check your connection and try again", 'error');
+    }
+    renderAll();
+  }
+
+  async function addSub(majorName, sub) {
+    const group = categoriesData.find(g => g.name === majorName);
+    if (!group) return;
+    if (group.subs.includes(sub)) return;
+    group.subs.push(sub);
+    sortCategories();
+    const ok = await saveCategories();
+    if (ok) {
+      showToast(`Added "${sub}"`);
+    } else {
+      group.subs = group.subs.filter(s => s !== sub);
+      showToast("Couldn't save — check your connection and try again", 'error');
+    }
+    renderAll();
+  }
+
+  async function deleteSub(majorName, sub) {
+    const group = categoriesData.find(g => g.name === majorName);
+    if (!group) return;
+    const idx = group.subs.indexOf(sub);
+    group.subs = group.subs.filter(s => s !== sub);
+    const ok = await saveCategories();
+    if (ok) {
+      showToast(`Removed "${sub}"`);
+    } else {
+      if (idx !== -1) group.subs.splice(idx, 0, sub);
+      showToast("Couldn't save — check your connection and try again", 'error');
+    }
+    renderAll();
+  }
+
+  function renderAll() {
+    renderMembers();
+    renderFormOptions();
+    renderExpenses();
+    renderDashboard();
+    renderCategoryGuide();
+  }
+
+  function startEdit(ex) {
+    editingId = ex.id;
+    document.getElementById('letDesc').value = ex.description;
+    document.getElementById('letAmount').value = ex.amount;
+    document.getElementById('letDate').value = ex.date;
+    document.getElementById('letCategory').value = ex.category;
+    updateSubcategoryList();
+    document.getElementById('letSubcategory').value = ex.subcategory || '';
+    document.getElementById('letPaidBy').value = ex.paidBy;
+    document.getElementById('letPaidWith').value = ex.paidWith || 'Cash';
+    document.getElementById('letEditBanner').classList.add('active');
+    document.getElementById('letSubmit').textContent = 'Save changes';
+    document.getElementById('letFormMsg').textContent = '';
+    switchTab('ledger');
+    document.querySelector('.let-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function cancelEdit() {
+    editingId = null;
+    document.getElementById('letDesc').value = 'Groceries at S&R';
+    document.getElementById('letAmount').value = '';
+    document.getElementById('letDate').value = new Date().toISOString().slice(0,10);
+    document.getElementById('letSubcategory').value = '';
+    document.getElementById('letPaidWith').value = lastPaidWith;
+    document.getElementById('letEditBanner').classList.remove('active');
+    document.getElementById('letSubmit').textContent = 'Add to the ledger';
+    document.getElementById('letFormMsg').textContent = '';
+    renderFormOptions();
+  }
+
+  async function handleSubmit() {
+    const msgEl = document.getElementById('letFormMsg');
+    msgEl.textContent = '';
+    const desc = document.getElementById('letDesc').value.trim();
+    const amount = parseFloat(document.getElementById('letAmount').value);
+    const date = document.getElementById('letDate').value;
+    const category = document.getElementById('letCategory').value;
+    const subInput = document.getElementById('letSubcategory');
+    const subcategory = subInput.value.trim() || subInput.dataset.default || '';
+    const paidBy = document.getElementById('letPaidBy').value;
+    const paidWith = document.getElementById('letPaidWith').value;
+
+    if (!desc) { msgEl.textContent = 'Add a short description.'; return; }
+    if (!amount || amount <= 0) { msgEl.textContent = 'Enter an amount greater than 0.'; return; }
+    if (!paidBy) { msgEl.textContent = 'Add a family member first.'; return; }
+
+    const submitBtn = document.getElementById('letSubmit');
+    submitBtn.disabled = true;
+    submitBtn.textContent = editingId ? 'Saving…' : 'Adding…';
+
+    if (editingId) {
+      const idx = expenses.findIndex(e => e.id === editingId);
+      const previous = idx !== -1 ? { ...expenses[idx] } : null;
+      if (idx !== -1) {
+        expenses[idx] = {
+          ...expenses[idx],
+          description: desc,
+          amount: Math.round(amount * 100) / 100,
+          date: date || new Date().toISOString().slice(0,10),
+          category,
+          subcategory,
+          paidBy,
+          paidWith,
+        };
+      }
+      const ok = await saveExpenses();
+      if (ok) {
+        lastPaidBy = paidBy;
+        lastPaidWith = paidWith;
+        showToast('Changes saved');
+        cancelEdit();
+      } else {
+        if (idx !== -1 && previous) expenses[idx] = previous;
+        showToast("Couldn't save — check your connection and try again", 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Save changes';
+        return;
+      }
+    } else {
+      const newExpense = {
+        id: uid(),
+        description: desc,
+        amount: Math.round(amount * 100) / 100,
+        date: date || new Date().toISOString().slice(0,10),
+        category,
+        subcategory,
+        paidBy,
+        paidWith,
+        createdAt: Date.now().toString(),
+      };
+      expenses.push(newExpense);
+      const ok = await saveExpenses();
+      if (ok) {
+        lastPaidBy = paidBy;
+        lastPaidWith = paidWith;
+        showToast('Expense added');
+        document.getElementById('letDesc').value = 'Groceries at S&R';
+        document.getElementById('letAmount').value = '';
+        document.getElementById('letSubcategory').value = '';
+        document.getElementById('letPaidWith').value = lastPaidWith;
+      } else {
+        expenses = expenses.filter(e => e.id !== newExpense.id);
+        showToast("Couldn't save — check your connection and try again. Your entry is still in the form.", 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Add to the ledger';
+        return;
+      }
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = editingId ? 'Save changes' : 'Add to the ledger';
+    renderAll();
+  }
+
+  document.getElementById('letSubmit').addEventListener('click', handleSubmit);
+  document.getElementById('letCancelEdit').addEventListener('click', cancelEdit);
+  document.getElementById('letTabLedger').addEventListener('click', () => switchTab('ledger'));
+  document.getElementById('letTabDash').addEventListener('click', () => switchTab('dashboard'));
+  document.getElementById('letTabCats').addEventListener('click', () => switchTab('categories'));
+  document.getElementById('letDashFilterMode').addEventListener('change', handleDashFilterModeChange);
+  document.getElementById('letDashFilterMonth').addEventListener('change', (e) => { dashFilterMonth = e.target.value; renderDashboard(); });
+  document.getElementById('letDashFilterYear').addEventListener('input', (e) => { dashFilterYear = e.target.value; renderDashboard(); });
+  document.getElementById('letDashFilterFrom').addEventListener('change', (e) => { dashFilterFrom = e.target.value; renderDashboard(); });
+  document.getElementById('letDashFilterTo').addEventListener('change', (e) => { dashFilterTo = e.target.value; renderDashboard(); });
+  document.getElementById('letAddMajorBtn').addEventListener('click', () => {
+    const input = document.getElementById('letNewMajor');
+    const val = input.value.trim();
+    if (!val) return;
+    addMajor(val);
+    input.value = '';
+  });
+  document.getElementById('letNewMajor').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('letAddMajorBtn').click();
+  });
+
+  (async function init() {
+    await loadData();
+    renderAll();
+  })();
+})();
+</script>
