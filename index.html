@@ -1154,7 +1154,7 @@
   }
   function fmtMoney(n) {
     const sign = n < 0 ? '-' : '';
-    return sign + '$' + Math.abs(n).toFixed(2);
+    return sign + '₱' + Math.round(Math.abs(n)).toLocaleString('en-US');
   }
   function fmtDate(d) {
     try {
@@ -1480,7 +1480,7 @@
     const maxBucket = Math.max(1, ...buckets.map(b => b.total));
     trendEl.innerHTML = buckets.map(b => `
       <div class="let-trend-col" title="${escapeHtml(b.label)}: ${fmtMoney(b.total)}">
-        <span class="let-trend-val">${b.total > 0 ? '$' + Math.round(b.total) : ''}</span>
+        <span class="let-trend-val">${b.total > 0 ? '₱' + Math.round(b.total).toLocaleString('en-US') : ''}</span>
         <div class="let-trend-bar" style="height:${Math.max(2, b.total / maxBucket * 100)}%"></div>
         <span class="let-trend-label">${escapeHtml(b.label)}</span>
       </div>
