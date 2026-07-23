@@ -471,6 +471,97 @@
 
 /* Categories guide */
 .let-guide-hint { font-size: 12px; color: var(--ink-soft); margin: -4px 0 16px; }
+
+/* CSV import */
+.let-import-example {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 18px;
+  font-size: 11px;
+  background: var(--paper);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.let-import-example th, .let-import-example td {
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  text-align: left;
+  white-space: nowrap;
+}
+.let-import-example th { background: var(--card-bg); font-weight: 700; color: var(--ink-soft); }
+.let-import-upload {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.let-import-upload input[type="file"] {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+}
+.let-import-status { font-size: 13px; margin-bottom: 12px; min-height: 18px; }
+.let-import-status.error { color: var(--rose); }
+.let-import-status.success { color: var(--teal); }
+.let-import-summary {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  font-size: 13px;
+}
+.let-import-summary div { margin-bottom: 4px; }
+.let-import-summary div:last-child { margin-bottom: 0; }
+.let-import-warnlist {
+  max-height: 160px;
+  overflow-y: auto;
+  background: rgba(193,102,107,0.08);
+  border: 1px solid var(--rose);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: var(--ink);
+}
+.let-import-warnlist div { margin-bottom: 3px; }
+.let-import-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-bottom: 14px;
+}
+.let-import-table th, .let-import-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--grid-line);
+  text-align: left;
+}
+.let-import-table th { color: var(--ink-soft); font-weight: 700; }
+.let-import-confirm {
+  background: var(--teal);
+  color: white;
+  border: none;
+  padding: 11px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+}
+.let-import-confirm:hover { background: var(--ink); }
+.let-import-confirm:disabled { background: var(--gray); cursor: not-allowed; }
+.let-import-cancel {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  padding: 11px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  margin-left: 8px;
+}
+.let-import-cancel:hover { border-color: var(--rose); color: var(--rose); }
 .let-guide-major {
   background: var(--paper);
   border: 1px solid var(--line);
@@ -565,6 +656,7 @@
     <button class="let-tab active" id="letTabLedger">Ledger</button>
     <button class="let-tab" id="letTabDash">Dashboard</button>
     <button class="let-tab" id="letTabCats">Categories</button>
+    <button class="let-tab" id="letTabImport">Import</button>
   </div>
 
   <div class="let-view active" id="letViewLedger">
@@ -685,6 +777,34 @@
       </div>
     </div>
   </div>
+
+  <div class="let-view" id="letViewImport">
+    <div class="let-dash">
+      <div class="let-dash-block">
+        <div class="let-dash-block-title">Bulk import from CSV</div>
+        <div class="let-guide-hint">
+          For adding a lot of expenses at once (e.g. a year of credit card statements) instead of one at a time.
+          Your CSV needs these column headers in this exact order: <strong>Date, Description, Amount, Category, Subcategory, Paid By, Paid With</strong>.
+          Date should be YYYY-MM-DD. Unrecognized categories, subcategories, or family members are created automatically rather than skipped.
+        </div>
+        <table class="let-import-example">
+          <thead>
+            <tr><th>Date</th><th>Description</th><th>Amount</th><th>Category</th><th>Subcategory</th><th>Paid By</th><th>Paid With</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>2026-01-14</td><td>Meralco bill</td><td>3500</td><td>Utilities</td><td>Electricity</td><td>Dad</td><td>Credit Card</td></tr>
+            <tr><td>2026-01-16</td><td>Groceries at S&amp;R</td><td>4200</td><td>Groceries</td><td>Food</td><td>Mom</td><td>Cash</td></tr>
+          </tbody>
+        </table>
+
+        <div class="let-import-upload">
+          <input type="file" id="letImportFile" accept=".csv,text/csv" />
+        </div>
+        <div id="letImportStatus" class="let-import-status"></div>
+        <div id="letImportPreview"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -696,7 +816,7 @@
   // 2. Extensions > Apps Script, paste in the provided backend code, and deploy
   //    it as a Web App (Execute as: Me, Who has access: Anyone).
   // 3. Copy the deployment URL (it ends in /exec) and paste it below.
-  const REMOTE_STORAGE_URL = 'https://script.google.com/macros/s/AKfycbxRKiqmOw7tGaJj3O4wvfyHOucjoUs882BIqStJIqjKf9IyyqlPdJQVTVW9hh-wDTTB/exec';
+  const REMOTE_STORAGE_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
 
   const storage = {
     async get(key) {
@@ -1413,8 +1533,9 @@
       ledger: ['letTabLedger', 'letViewLedger'],
       dashboard: ['letTabDash', 'letViewDash'],
       categories: ['letTabCats', 'letViewCats'],
+      import: ['letTabImport', 'letViewImport'],
     };
-    ['ledger', 'dashboard', 'categories'].forEach(t => {
+    ['ledger', 'dashboard', 'categories', 'import'].forEach(t => {
       const [tabId, viewId] = map[t];
       document.getElementById(tabId).classList.toggle('active', t === tab);
       document.getElementById(viewId).classList.toggle('active', t === tab);
@@ -1609,6 +1730,280 @@
     renderAll();
   }
 
+  // ============================================================
+  // CSV IMPORT
+  // ============================================================
+  const IMPORT_HEADERS = ['Date', 'Description', 'Amount', 'Category', 'Subcategory', 'Paid By', 'Paid With'];
+  let pendingImport = null; // { rows: [...], skipped: [...], newCategories: Set, newMembers: Set }
+
+  // Minimal RFC4180-ish CSV parser: handles quoted fields, escaped quotes ("")
+  // inside quotes, and commas/newlines within quoted fields.
+  function parseCSV(text) {
+    const rows = [];
+    let row = [];
+    let field = '';
+    let inQuotes = false;
+    let i = 0;
+    const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    while (i < normalized.length) {
+      const char = normalized[i];
+      if (inQuotes) {
+        if (char === '"') {
+          if (normalized[i + 1] === '"') { field += '"'; i += 2; continue; }
+          inQuotes = false; i++; continue;
+        }
+        field += char; i++; continue;
+      }
+      if (char === '"') { inQuotes = true; i++; continue; }
+      if (char === ',') { row.push(field); field = ''; i++; continue; }
+      if (char === '\n') {
+        row.push(field); field = '';
+        rows.push(row); row = [];
+        i++; continue;
+      }
+      field += char; i++;
+    }
+    if (field.length > 0 || row.length > 0) { row.push(field); rows.push(row); }
+    return rows.filter(r => r.length > 1 || (r.length === 1 && r[0].trim() !== ''));
+  }
+
+  function normalizeImportDate(str) {
+    if (!str) return null;
+    const s = str.trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+    // Fall back to native parsing for common alternate formats (M/D/YYYY etc.)
+    const d = new Date(s);
+    if (isNaN(d.getTime())) return null;
+    return d.toISOString().slice(0, 10);
+  }
+
+  function parseImportAmount(str) {
+    if (str === undefined || str === null) return null;
+    const cleaned = String(str).replace(/[^0-9.\-]/g, '');
+    if (cleaned === '' || cleaned === '-') return null;
+    const n = parseFloat(cleaned);
+    if (isNaN(n) || n <= 0) return null;
+    return Math.round(n * 100) / 100;
+  }
+
+  function findMemberCaseInsensitive_(name) {
+    return members.find(m => m.toLowerCase() === name.toLowerCase());
+  }
+  function findCategoryCaseInsensitive_(name) {
+    return categoriesData.find(g => g.name.toLowerCase() === name.toLowerCase());
+  }
+
+  async function handleImportFileChange(e) {
+    const file = e.target.files[0];
+    const statusEl = document.getElementById('letImportStatus');
+    const previewEl = document.getElementById('letImportPreview');
+    previewEl.innerHTML = '';
+    pendingImport = null;
+    if (!file) return;
+
+    statusEl.className = 'let-import-status';
+    statusEl.textContent = 'Reading file…';
+
+    let text;
+    try {
+      text = await file.text();
+    } catch (err) {
+      statusEl.className = 'let-import-status error';
+      statusEl.textContent = "Couldn't read that file — try again or use a different browser.";
+      return;
+    }
+
+    const rows = parseCSV(text);
+    if (rows.length === 0) {
+      statusEl.className = 'let-import-status error';
+      statusEl.textContent = 'That file appears to be empty.';
+      return;
+    }
+
+    const header = rows[0].map(h => h.trim().toLowerCase());
+    const expectedHeader = IMPORT_HEADERS.map(h => h.toLowerCase());
+    const headerMatches = expectedHeader.every((h, i) => header[i] === h);
+    if (!headerMatches) {
+      statusEl.className = 'let-import-status error';
+      statusEl.textContent = 'Column headers must be exactly: ' + IMPORT_HEADERS.join(', ');
+      return;
+    }
+
+    const dataRows = rows.slice(1);
+    const validRows = [];
+    const skipped = [];
+    const newCategories = new Map(); // name -> Set of subcategory names to add
+    const newMembers = new Set();
+
+    dataRows.forEach((cols, i) => {
+      const lineNum = i + 2; // +1 for header, +1 for 1-indexing
+      if (cols.every(c => !c || !c.trim())) return; // skip blank lines
+
+      const rawDate = (cols[0] || '').trim();
+      const description = (cols[1] || '').trim();
+      const rawAmount = (cols[2] || '').trim();
+      const rawCategory = (cols[3] || '').trim();
+      const rawSubcategory = (cols[4] || '').trim();
+      const rawPaidBy = (cols[5] || '').trim();
+      const rawPaidWith = (cols[6] || '').trim();
+
+      const date = normalizeImportDate(rawDate);
+      const amount = parseImportAmount(rawAmount);
+
+      if (!date) { skipped.push(`Line ${lineNum}: invalid date "${rawDate}"`); return; }
+      if (!description) { skipped.push(`Line ${lineNum}: missing description`); return; }
+      if (amount === null) { skipped.push(`Line ${lineNum}: invalid amount "${rawAmount}"`); return; }
+      if (!rawCategory) { skipped.push(`Line ${lineNum}: missing category`); return; }
+      if (!rawPaidBy) { skipped.push(`Line ${lineNum}: missing "Paid By"`); return; }
+
+      const existingCat = findCategoryCaseInsensitive_(rawCategory);
+      const category = existingCat ? existingCat.name : rawCategory;
+      if (!existingCat && !newCategories.has(category)) newCategories.set(category, new Set());
+      if (rawSubcategory) {
+        const subsList = existingCat ? existingCat.subs : [];
+        const hasSub = subsList.some(s => s.toLowerCase() === rawSubcategory.toLowerCase());
+        if (!hasSub) {
+          if (!newCategories.has(category)) newCategories.set(category, new Set());
+          newCategories.get(category).add(rawSubcategory);
+        }
+      }
+
+      const existingMember = findMemberCaseInsensitive_(rawPaidBy);
+      const paidBy = existingMember || rawPaidBy;
+      if (!existingMember) newMembers.add(paidBy);
+
+      validRows.push({
+        date, description, amount, category,
+        subcategory: rawSubcategory, paidBy,
+        paidWith: rawPaidWith || 'Cash',
+      });
+    });
+
+    if (validRows.length === 0) {
+      statusEl.className = 'let-import-status error';
+      statusEl.textContent = 'No valid rows found. ' + skipped.length + ' row(s) had problems — check the format against the example above.';
+      previewEl.innerHTML = skipped.length
+        ? `<div class="let-import-warnlist">${skipped.map(s => `<div>${escapeHtml(s)}</div>`).join('')}</div>`
+        : '';
+      return;
+    }
+
+    pendingImport = { rows: validRows, skipped, newCategories, newMembers };
+    statusEl.className = 'let-import-status success';
+    statusEl.textContent = `Parsed ${validRows.length} row${validRows.length === 1 ? '' : 's'} successfully.`;
+    renderImportPreview();
+  }
+
+  function renderImportPreview() {
+    const previewEl = document.getElementById('letImportPreview');
+    if (!pendingImport) { previewEl.innerHTML = ''; return; }
+
+    const { rows, skipped, newCategories, newMembers } = pendingImport;
+    const total = rows.reduce((s, r) => s + r.amount, 0);
+    const dates = rows.map(r => r.date).sort();
+
+    let html = '<div class="let-import-summary">';
+    html += `<div><strong>${rows.length}</strong> expense${rows.length === 1 ? '' : 's'} ready to import, totaling <strong>${fmtMoney(total)}</strong></div>`;
+    html += `<div>Date range: ${escapeHtml(dates[0])} to ${escapeHtml(dates[dates.length - 1])}</div>`;
+    if (newCategories.size > 0) {
+      const catList = Array.from(newCategories.entries()).map(([c, subs]) =>
+        subs.size ? `${c} (${Array.from(subs).join(', ')})` : c
+      ).join('; ');
+      html += `<div>New categories/subcategories that will be created: ${escapeHtml(catList)}</div>`;
+    }
+    if (newMembers.size > 0) {
+      html += `<div>New family members that will be created: ${escapeHtml(Array.from(newMembers).join(', '))}</div>`;
+    }
+    if (skipped.length > 0) {
+      html += `<div>${skipped.length} row${skipped.length === 1 ? '' : 's'} will be skipped (see below)</div>`;
+    }
+    html += '</div>';
+
+    if (skipped.length > 0) {
+      html += `<div class="let-import-warnlist">${skipped.map(s => `<div>${escapeHtml(s)}</div>`).join('')}</div>`;
+    }
+
+    const preview = rows.slice(0, 8);
+    html += '<table class="let-import-table"><thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Category</th><th>Paid By</th></tr></thead><tbody>';
+    preview.forEach(r => {
+      html += `<tr><td>${escapeHtml(r.date)}</td><td>${escapeHtml(r.description)}</td><td>${fmtMoney(r.amount)}</td><td>${escapeHtml(r.category)}${r.subcategory ? ' – ' + escapeHtml(r.subcategory) : ''}</td><td>${escapeHtml(r.paidBy)}</td></tr>`;
+    });
+    html += '</tbody></table>';
+    if (rows.length > preview.length) {
+      html += `<div class="let-guide-hint" style="margin-top:-8px;">…and ${rows.length - preview.length} more row${rows.length - preview.length === 1 ? '' : 's'} not shown here.</div>`;
+    }
+
+    html += `<button class="let-import-confirm" id="letImportConfirmBtn">Import ${rows.length} expense${rows.length === 1 ? '' : 's'}</button>`;
+    html += `<button class="let-import-cancel" id="letImportCancelBtn">Cancel</button>`;
+
+    previewEl.innerHTML = html;
+    document.getElementById('letImportConfirmBtn').addEventListener('click', confirmImport);
+    document.getElementById('letImportCancelBtn').addEventListener('click', cancelImport);
+  }
+
+  function cancelImport() {
+    pendingImport = null;
+    document.getElementById('letImportFile').value = '';
+    document.getElementById('letImportStatus').textContent = '';
+    document.getElementById('letImportPreview').innerHTML = '';
+  }
+
+  async function confirmImport() {
+    if (!pendingImport) return;
+    const confirmBtn = document.getElementById('letImportConfirmBtn');
+    if (confirmBtn) { confirmBtn.disabled = true; confirmBtn.textContent = 'Importing…'; }
+
+    const { rows, newCategories, newMembers } = pendingImport;
+
+    // Snapshot for rollback if any save fails partway through.
+    const prevExpenses = expenses.slice();
+    const prevCategories = JSON.parse(JSON.stringify(categoriesData));
+    const prevMembers = members.slice();
+
+    newCategories.forEach((subs, name) => {
+      let group = categoriesData.find(g => g.name === name);
+      if (!group) { group = { name, subs: [] }; categoriesData.push(group); }
+      subs.forEach(s => { if (!group.subs.includes(s)) group.subs.push(s); });
+    });
+    if (newCategories.size > 0) sortCategories();
+
+    newMembers.forEach(m => { if (!members.includes(m)) members.push(m); });
+
+    rows.forEach(r => {
+      expenses.push({
+        id: uid(),
+        description: r.description,
+        amount: r.amount,
+        date: r.date,
+        category: r.category,
+        subcategory: r.subcategory,
+        paidBy: r.paidBy,
+        paidWith: r.paidWith,
+        createdAt: Date.now().toString(),
+      });
+    });
+
+    const catOk = newCategories.size > 0 ? await saveCategories() : true;
+    const memberOk = newMembers.size > 0 ? await saveMembers() : true;
+    const expOk = await saveExpenses();
+
+    if (catOk && memberOk && expOk) {
+      showToast(`Imported ${rows.length} expense${rows.length === 1 ? '' : 's'}`);
+      pendingImport = null;
+      document.getElementById('letImportFile').value = '';
+      document.getElementById('letImportStatus').textContent = '';
+      document.getElementById('letImportPreview').innerHTML = '';
+      switchTab('ledger');
+      renderAll();
+    } else {
+      expenses = prevExpenses;
+      categoriesData = prevCategories;
+      members = prevMembers;
+      showToast("Couldn't save the import — check your connection and try again", 'error');
+      if (confirmBtn) { confirmBtn.disabled = false; confirmBtn.textContent = `Import ${rows.length} expense${rows.length === 1 ? '' : 's'}`; }
+    }
+  }
+
   function renderAll() {
     renderMembers();
     renderFormOptions();
@@ -1736,6 +2131,8 @@
   document.getElementById('letTabLedger').addEventListener('click', () => switchTab('ledger'));
   document.getElementById('letTabDash').addEventListener('click', () => switchTab('dashboard'));
   document.getElementById('letTabCats').addEventListener('click', () => switchTab('categories'));
+  document.getElementById('letTabImport').addEventListener('click', () => switchTab('import'));
+  document.getElementById('letImportFile').addEventListener('change', handleImportFileChange);
   document.getElementById('letDashFilterMode').addEventListener('change', handleDashFilterModeChange);
   document.getElementById('letDashFilterMonth').addEventListener('change', (e) => { dashFilterMonth = e.target.value; renderDashboard(); });
   document.getElementById('letDashFilterYear').addEventListener('input', (e) => { dashFilterYear = e.target.value; renderDashboard(); });
