@@ -826,6 +826,12 @@
       const res = await fetch(`${REMOTE_STORAGE_URL}?key=${encodeURIComponent(key)}`);
       if (!res.ok) throw new Error('Storage GET failed: ' + res.status);
       const data = await res.json();
+      // The Apps Script backend always responds with HTTP 200, even when something
+      // went wrong on its end (e.g. a malformed request) — it reports failures via
+      // an "error" field in the JSON body instead of an HTTP error status. Without
+      // this check, a backend-side failure would look identical to "key not found"
+      // and silently be treated as an empty value.
+      if (data && data.error) throw new Error('Storage GET error: ' + data.error);
       if (data.value === null || data.value === undefined || data.value === '') return null;
       return { key: data.key, value: data.value };
     },
@@ -840,7 +846,14 @@
         body: JSON.stringify({ key, value }),
       });
       if (!res.ok) throw new Error('Storage POST failed: ' + res.status);
-      return res.json();
+      const data = await res.json();
+      // Same reasoning as in get() above: the backend reports failures with HTTP 200
+      // plus an "error" field, not an HTTP error status. saveWithRetry only treats a
+      // save as successful if this call doesn't throw, so without this check a
+      // backend-side save failure (e.g. hitting a size limit) would be silently
+      // reported to the user as "saved" when nothing was actually written.
+      if (data && data.error) throw new Error('Storage POST error: ' + data.error);
+      return data;
     },
   };
   // ============================================================
